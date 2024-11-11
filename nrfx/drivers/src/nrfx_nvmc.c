@@ -245,7 +245,13 @@ static void nvmc_word_write(uint32_t addr, uint32_t value)
     while (!nrf_nvmc_ready_check(NRF_NVMC))
     {}
 #endif
-
+    // Reuse last registers from NVMC 
+    // to notify renode NVMC mockup to 
+    // update the flash.
+    // TODO: Check how to obtain a hook while
+    // WREN (CONFIG) is enabled instead
+    NRF_NVMC->IHIT = addr;
+    NRF_NVMC->IMISS = value;
     nrf_nvmc_word_write(addr, value);
     __DMB();
 }
